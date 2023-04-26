@@ -1,5 +1,7 @@
 ﻿using ReservationSystem.Services.Booking.Models;
 using ReservationSystem.Shared.Interface.RoomManagement;
+using ReservationSystem.Shared.Interfaces.Notification.Email;
+using ReservationSystem.Shared.Interfaces.RoomBooking;
 using ReservationSystem.Shared.Interfaces.RoomManagement.Models;
 
 namespace ReservationSystem.Services.Booking
@@ -12,12 +14,16 @@ namespace ReservationSystem.Services.Booking
     public class BookingService : IBookingService
     {
         private readonly IRoomManagement _roomManagement;
+        private readonly IRoomBooking _roomBooking;
         private readonly ILogger<BookingService> _logger;
+        private readonly IEmailService _emailService;
 
-        public BookingService(IRoomManagement roomManagement, ILogger<BookingService> logger)
+        public BookingService(IRoomManagement roomManagement, ILogger<BookingService> logger, IRoomBooking roomBooking, IEmailService emailService)
         {
             _roomManagement = roomManagement;
             _logger = logger;
+            _roomBooking = roomBooking;
+            _emailService = emailService;
         }
 
         public async Task<IEnumerable<string>> BookRoom(BookRoomParameters parameters)
@@ -57,6 +63,19 @@ namespace ReservationSystem.Services.Booking
                 {
                     errors.Add($"There is a conflict in allocation on day {currentDate.ToShortDateString()}");
                 }         
+            }
+
+            if (!errors.Any())
+            {
+                var bookRoom = await _roomBooking.BookRoom(new Shared.Interfaces.RoomBooking.Models.BookRoomParameters()
+                {
+                    DateFrom = parameters.DateFrom,
+                    DateTo = parameters.DateTo,
+                    ReservedPeople = parameters.NumberOfPeople,
+                    RoomId = parameters.RoomId,
+                });
+                await _emailService.SendEmail(new Shared.Interfaces.Notification.Email.Models.SendEmailParameters { 
+                    Body = $"EMAIL SENT TO test@admin.com FOR CREATED Reservation WITH ID {bookRoom.ReservationId}" });
             }
 
             return errors;

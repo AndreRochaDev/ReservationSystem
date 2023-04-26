@@ -14,6 +14,12 @@ namespace ReservationSystem.RoomManagement.Data.SQLite.Data.DbContext
         {
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlite("Data Source=ReservationSystem.db",
+                options => options.MigrationsAssembly("ReservationSystem.RoomManagement.Data.SQLite"));
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Room>().HasKey(r => r.Id);

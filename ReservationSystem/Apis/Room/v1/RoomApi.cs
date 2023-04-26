@@ -16,8 +16,8 @@ namespace ReservationSystem.Apis.Room.v1
             {
                 var rooms = await roomManagement.GetRooms();
 
+                return TypedResults.Ok(new GetRoomsResponse());
 
-                return TypedResults.Ok(new GetRoomsResponse(rooms));
             })
             .WithName("GetRooms")
             .WithOpenApi();

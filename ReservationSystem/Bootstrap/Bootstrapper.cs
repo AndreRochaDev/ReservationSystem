@@ -3,6 +3,8 @@ using ReservationSystem.Apis.Booking.v1.Models;
 using ReservationSystem.Apis.Booking.v1.Validators;
 using ReservationSystem.RoomManagement.Data.SQLite.Extensions;
 using ReservationSystem.Services.Booking;
+using ReservationSystem.Services.Notification;
+using ReservationSystem.Shared.Interfaces.Notification.Email;
 
 namespace ReservationSystem.Bootstrap
 {
@@ -19,6 +21,7 @@ namespace ReservationSystem.Bootstrap
         {
             services.AddScoped<IBookingService, BookingService>();
             services.AddScoped<IValidator<BookRoomRequest>, BookRoomRequestValidator>();
+            services.AddScoped<IEmailService, EmailService>();
             return services;
         }
 

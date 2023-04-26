@@ -5,6 +5,7 @@ using ReservationSystem.RoomManagement.Data.SQLite.Data.DbContext;
 using ReservationSystem.RoomManagement.Data.SQLite.Options;
 using ReservationSystem.RoomManagement.Data.SQLite.Services;
 using ReservationSystem.Shared.Interface.RoomManagement;
+using ReservationSystem.Shared.Interfaces.RoomBooking;
 
 namespace ReservationSystem.RoomManagement.Data.SQLite.Extensions
 {
@@ -14,9 +15,12 @@ namespace ReservationSystem.RoomManagement.Data.SQLite.Extensions
         {
             var connection = configuration[RoomManagementDataOptions.ConfigurationConnectionStringPosition];
             services.Configure<RoomManagementDataOptions>(options => configuration.GetSection(RoomManagementDataOptions.ConfigurationPosition).Bind(options));
-            services.AddSingleton<IRoomManagement, RoomManagementSQLiteService>();
+            
+            services.AddScoped<IRoomManagement, RoomManagementSQLiteService>();
+            services.AddScoped<IRoomBooking, RoomBookingSQLiteService>();
+
             services.AddDbContext<RoomManagementDbContext>(options => 
-            options.UseSqlite(connection));
+            options.UseSqlite(connection, options => options.MigrationsAssembly("ReservationSystem.RoomManagement.Data.SQLite")));
             return services;
         }
     }

@@ -7,10 +7,11 @@
         public int NumberOfPeople { get; set; }
     }
 
-    public static class RoomingExtensions
+    public static class RoomExtensions
     {
-        public static Room AsRoomResponseObject(this Shared.Interfaces.RoomManagement.Models.Room room)
+        public static Room? AsRoomResponseObject(this Shared.Interfaces.RoomManagement.Models.Room room)
         {
+            if (room == null) return null;
             return new()
             {
                 Id = room.Id,
